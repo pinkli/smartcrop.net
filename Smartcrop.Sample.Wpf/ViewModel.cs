@@ -18,8 +18,8 @@ namespace Smartcrop.Sample.Wpf
 
         private readonly Func<string> fileSelector;
 
-        private int cropWidth = 100;
-        private int cropHeight = 100;
+        private int cropWidth = 320;
+        private int cropHeight = 180;
         private string sourceImagePath;
         private ImageSource debugImage;
         private ImageSource croppedImage;
