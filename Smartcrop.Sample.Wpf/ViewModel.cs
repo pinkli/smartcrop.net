@@ -26,6 +26,8 @@ namespace Smartcrop.Sample.Wpf
         private string errorText;
         private bool useDetectFace;
 
+        private DetectFaces facedetector = new DetectFaces();
+
         public ViewModel(Func<string> fileSelector)
         {
             this.fileSelector = fileSelector ?? throw new ArgumentNullException(nameof(fileSelector));
@@ -67,7 +69,6 @@ namespace Smartcrop.Sample.Wpf
                 BoostArea[] boostAreas = Array.Empty<BoostArea>();
                 if (this.UseDetectFace)
                 {
-                    var facedetector = new DetectFaces();
                     boostAreas = facedetector.FindBoostAreas(this.SourceImagePath).ToArray();
                 }
 

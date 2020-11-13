@@ -8,6 +8,14 @@ namespace Smartcrop
 {
     public class DetectFaces
     {
+        private FrontalFaceDetector detector;
+
+        public DetectFaces()
+        {
+            this.detector = Dlib.GetFrontalFaceDetector();
+        }
+
+
         public List<BoostArea> FindBoostAreas(string imageFilePath)
         {
             var rects = FindFaces(imageFilePath);
@@ -18,8 +26,8 @@ namespace Smartcrop
         {
             var result = new List<Rectangle>();
 
-            using (var detector = Dlib.GetFrontalFaceDetector())
-            {
+            //using (var detector = Dlib.GetFrontalFaceDetector())
+            //{
                 using var img = Dlib.LoadImage<RgbPixel>(imageFilePath);
                 double size0 = img.Size;
 
@@ -54,7 +62,7 @@ namespace Smartcrop
                 //    Dlib.SaveJpeg(img, $"{getFileName(imageFilePath)}-faces.jpg");
 
                 //}
-            }
+            //}
 
             return result;
         }
