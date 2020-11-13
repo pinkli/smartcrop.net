@@ -24,6 +24,7 @@ namespace Smartcrop.Sample.Wpf
         private ImageSource debugImage;
         private ImageSource croppedImage;
         private string errorText;
+        private bool useDetectFace;
 
         public ViewModel(Func<string> fileSelector)
         {
@@ -34,7 +35,8 @@ namespace Smartcrop.Sample.Wpf
             {
                 nameof(this.SourceImagePath),
                 nameof(this.CropWidth),
-                nameof(this.CropHeight)
+                nameof(this.CropHeight),
+                nameof(this.UseDetectFace)
             };
 
             // create a new cropped image whenever one of these properties changes
@@ -62,19 +64,30 @@ namespace Smartcrop.Sample.Wpf
                 var watch = Stopwatch.StartNew();
 
                 // detect faces
-                var facedetector = new DetectFaces();
-                var boostAreas = facedetector.FindBoostAreas(this.SourceImagePath);
+                BoostArea[] boostAreas = Array.Empty<BoostArea>();
+                if (this.UseDetectFace)
+                {
+                    var facedetector = new DetectFaces();
+                    boostAreas = facedetector.FindBoostAreas(this.SourceImagePath).ToArray();
+                }
 
+                watch.Stop();
+
+                string msg = $"{boostAreas.Length} faces detected, takes: {watch.ElapsedMilliseconds} ms; ";
+
+                watch.Restart();
                 // load the source image
                 using (var bitmap = SKBitmap.Decode(this.SourceImagePath))
                 {
                     // calculate the best crop area
-                    var result = crop.Crop(bitmap, boostAreas.ToArray());
+                    var result = crop.Crop(bitmap, boostAreas);
                     watch.Stop();
+
+                    msg += $"cropCompute: {watch.ElapsedMilliseconds} ms; ";
 
                     this.DebugImage = this.CreateImageSource(result.DebugInfo.Output);
 
-                    watch.Start();
+                    watch.Restart();
                     
                     // crop the image
                     SKRect cropRect = new SKRect(result.Area.Left, result.Area.Top, result.Area.Right, result.Area.Bottom);
@@ -87,11 +100,13 @@ namespace Smartcrop.Sample.Wpf
                         canvas.DrawBitmap(bitmap, source, dest);
                         watch.Stop();
 
+                        msg += $"drawCropped: {watch.ElapsedMilliseconds} ms; ";
+
                         this.CroppedImage = this.CreateImageSource(croppedBitmap);
                     };
                 }
 
-                this.ErrorText = null;
+                this.ErrorText = msg;
             }
             catch (Exception e)
             {
@@ -184,6 +199,12 @@ namespace Smartcrop.Sample.Wpf
         {
             get => this.errorText;
             set => this.SetProperty(ref this.errorText, value);
+        }
+
+        public bool UseDetectFace
+        {
+            get => this.useDetectFace;
+            set => this.SetProperty(ref this.useDetectFace, value);
         }
 
         private void SetProperty<T>(ref T field, T value, [CallerMemberName]string propertyName = "")

@@ -94,8 +94,9 @@
                    Height="{Binding CropHeight}"/>
         </Viewbox>
 
-        <Grid Grid.Row="3" HorizontalAlignment="Center">
+        <Grid Grid.Row="4" HorizontalAlignment="Center">
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -136,6 +137,20 @@
                        Grid.Row="2"
                        Grid.Column="2"
                        VerticalAlignment="Center"/>
+
+            <TextBlock Text="Detect faces:"
+                       Grid.Row="3"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"/>
+            
+            <CheckBox IsChecked="{Binding UseDetectFace, UpdateSourceTrigger=PropertyChanged}"  
+                      Margin="5,5,2,0"
+                     Grid.Row="3"
+                     Grid.Column="1" />
+
+            
+
+            
         </Grid>
 
         <TextBlock Text="{Binding ErrorText}"
