@@ -16,6 +16,7 @@
     <Company>softaware gmbh</Company>
     <Version>1.0.2-beta</Version>
     <Platforms>AnyCPU;x64</Platforms>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -35,6 +36,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DlibDotNet" Version="19.20.0.20200725" />
     <PackageReference Include="SkiaSharp" Version="2.80.2" />
   </ItemGroup>
 

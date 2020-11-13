@@ -60,11 +60,16 @@ namespace Smartcrop.Sample.Wpf
                 var crop = new ImageCrop(options);
 
                 var watch = Stopwatch.StartNew();
+
+                // detect faces
+                var facedetector = new DetectFaces();
+                var boostAreas = facedetector.FindBoostAreas(this.SourceImagePath);
+
                 // load the source image
                 using (var bitmap = SKBitmap.Decode(this.SourceImagePath))
                 {
                     // calculate the best crop area
-                    var result = crop.Crop(bitmap);
+                    var result = crop.Crop(bitmap, boostAreas.ToArray());
                     watch.Stop();
 
                     this.DebugImage = this.CreateImageSource(result.DebugInfo.Output);
