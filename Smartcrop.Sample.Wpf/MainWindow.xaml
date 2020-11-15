@@ -90,8 +90,7 @@
                  Margin="10"
                  StretchDirection="DownOnly">
             <Image Source="{Binding CroppedImage, TargetNullValue={x:Null}}"
-                   Width="{Binding CropWidth}"
-                   Height="{Binding CropHeight}"/>
+                   />
         </Viewbox>
 
         <Grid Grid.Row="4" HorizontalAlignment="Center">
@@ -118,7 +117,7 @@
                      Grid.Row="1"
                      Grid.Column="1"/>
 
-            <TextBlock Text="px"
+            <TextBlock Text=""
                        Grid.Row="1"
                        Grid.Column="2"
                        VerticalAlignment="Center"/>
@@ -133,7 +132,7 @@
                      Grid.Row="2"
                      Grid.Column="1"/>
 
-            <TextBlock Text="px"
+            <TextBlock Text=""
                        Grid.Row="2"
                        Grid.Column="2"
                        VerticalAlignment="Center"/>

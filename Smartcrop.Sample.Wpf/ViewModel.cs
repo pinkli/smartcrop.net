@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -18,8 +19,8 @@ namespace Smartcrop.Sample.Wpf
 
         private readonly Func<string> fileSelector;
 
-        private int cropWidth = 320;
-        private int cropHeight = 180;
+        private int cropWidth = 16;
+        private int cropHeight = 9;
         private string sourceImagePath;
         private ImageSource debugImage;
         private ImageSource croppedImage;
@@ -55,14 +56,6 @@ namespace Smartcrop.Sample.Wpf
         {
             try
             {
-                // create options and image crop 
-                var options = new Options(this.CropWidth, this.CropHeight)
-                {
-                    Debug = true
-                };
-
-                var crop = new ImageCrop(options);
-
                 var watch = Stopwatch.StartNew();
 
                 // detect faces
@@ -80,6 +73,16 @@ namespace Smartcrop.Sample.Wpf
                 // load the source image
                 using (var bitmap = SKBitmap.Decode(this.SourceImagePath))
                 {
+                    // create options and image crop 
+                    string ratio = $"{this.CropWidth}:{this.CropHeight}";
+                    var rationew = RatioUtil.ComputeRatio(bitmap.Width, bitmap.Height, ratio);
+                    var options = new Options(rationew.Width, rationew.Height)
+                    {
+                        Debug = true
+                    };
+
+                    var crop = new ImageCrop(options);
+
                     // calculate the best crop area
                     var result = crop.Crop(bitmap, boostAreas);
                     watch.Stop();
