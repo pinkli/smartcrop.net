@@ -9,7 +9,7 @@ namespace DemoDetectFaces
     {
         static void Main(string[] args)
         {
-            string image = @"C:\Users\civil\Pictures\xhwapp\0051bb32e68c44a0a753c5d51b9e27d0.jpg";
+            string image = args[0];  // dotnet DemoDetectFaces.dll C:\Users\civil\Pictures\xhwapp\0051bb32e68c44a0a753c5d51b9e27d0.jpg
             detect(image);
             Console.WriteLine("DONE");
         }
