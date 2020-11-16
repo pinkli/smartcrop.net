@@ -28,6 +28,10 @@ namespace smartcropper
         [Option("--skip-failed", Description = "Skip the crop-failing image, otherwise copy it to output dir")]
         public bool SkipFailed { get; set; }
 
+        [Option("--max-width", Description = "Max dest width, if specified")]
+        public int MaxWidth { get; set; }
+
+
         [Argument(0, Description = "The image or folder to be cropped")]
         [Required]
         public string SourcePath { get; set; }
@@ -48,9 +52,10 @@ namespace smartcropper
                 OutDir = "./";
             }
 
-            Console.WriteLine($"ratio: {Ratio}");
-            Console.WriteLine($"outdir: {OutDir}");
-            Console.WriteLine($"noface: {NoDetectFace}");
+            Console.WriteLine($"--ratio: {Ratio}");
+            Console.WriteLine($"--out-dir: {OutDir}");
+            Console.WriteLine($"--no-detect-face: {NoDetectFace}");
+            Console.WriteLine($"--max-width: {MaxWidth}");
             Console.WriteLine($"source path: {SourcePath}");
 
             if (!Directory.Exists(OutDir))
@@ -97,7 +102,7 @@ namespace smartcropper
                 Console.WriteLine($"{boostAreas.Length} faces detected, takes: {watch.ElapsedMilliseconds} ms");
 
                 // crop and save
-                var crop = new ImageCropAndSave(Ratio, debug: false);
+                var crop = new ImageCropAndSave(Ratio, maxWidth: this.MaxWidth, debug: false);
                 string destFile = DestFile(imageFile);
                 crop.CropAndSave(imageFile.FullName, destFile, boostAreas);
             }

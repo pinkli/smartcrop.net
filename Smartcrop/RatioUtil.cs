@@ -6,7 +6,7 @@ namespace Smartcrop
 {
     public static class RatioUtil
     {
-        public static Rectangle ComputeRatio(int originWidth, int originHeight, string ratio)
+        public static Rectangle ComputeRatio(int originWidth, int originHeight, string ratio, int maxWidth = 0)
         {
             var parts = ratio.Split(':');
             int w = int.Parse(parts[0]);
@@ -15,6 +15,13 @@ namespace Smartcrop
             double numRation = (double)w / h;
 
             var result = compute(originWidth, originHeight, numRation);
+            if (maxWidth > 0)  // if specified
+            {
+                if (result.width > maxWidth)
+                {
+                    return new Rectangle(0, 0, maxWidth, (int)(maxWidth / numRation));
+                }
+            }
 
             return new Rectangle(0, 0, result.width, result.height);
 
