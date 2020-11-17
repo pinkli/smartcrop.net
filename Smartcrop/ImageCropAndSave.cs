@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Text;
 using System.IO;
 using SkiaSharp;
-
+using DlibDotNet;
 
 namespace Smartcrop
 {
@@ -54,23 +54,37 @@ namespace Smartcrop
                     SKRect dest = new SKRect(0, 0, cropRect.Width, cropRect.Height);
                     canvas.DrawBitmap(bitmap, source, dest);
 
-                    using var resized = croppedBitmap.Resize(new SKImageInfo(options.Width, options.Height), SKFilterQuality.Medium);
+                    //using var resized = croppedBitmap.Resize(new SKImageInfo(options.Width, options.Height), SKFilterQuality.Medium);
                     
-                    using (var image = SKImage.FromBitmap(resized))
+                    using (var image = SKImage.FromBitmap(croppedBitmap))
                     using (var stream = File.Open(destFilePath, FileMode.OpenOrCreate))
                     {
-                        var data = image.Encode(getFormat(imageFile), 75);
+                        //var data = image.Encode(getFormat(imageFile), 75);
+                        var data = image.Encode();
                         data.SaveTo(stream);
-                        stream.Seek(0, SeekOrigin.Begin);
+                        //stream.Seek(0, SeekOrigin.Begin);
 
                     }
 
-                    watch.Stop();
-
-                    Console.WriteLine($"drawCropped: {watch.ElapsedMilliseconds} ms");
+                    
 
                 };
+
+                try
+                {
+                    ResizeUsingDlib(destFilePath, getFormat(imageFile), options.Width, options.Height);
+                }
+                catch
+                {
+                    // let it be
+                }
+
+                watch.Stop();
+
+                Console.WriteLine($"drawCropped: {watch.ElapsedMilliseconds} ms");
             }
+
+            
         }
 
         private SKEncodedImageFormat getFormat(FileInfo image)
@@ -86,5 +100,30 @@ namespace Smartcrop
                 _ => SKEncodedImageFormat.Jpeg
             };
         }
+
+        // dlib seems to make it compressed better filesize
+        private void ResizeUsingDlib(string filepath, SKEncodedImageFormat format, int width, int height)
+        {
+            
+            using var img = Dlib.LoadImage<RgbPixel>(filepath);
+
+            if (this.maxWidth > 0)  // specified
+            {
+                double size0 = img.Size;
+
+                double size = width * height;
+                double scale = Math.Sqrt(size / size0);
+
+                Dlib.ResizeImage(img, scale);
+            }
+            
+
+            if (format == SKEncodedImageFormat.Png)
+                Dlib.SavePng(img, filepath);
+            else
+                Dlib.SaveJpeg(img, filepath);
+            
+        }
+
     }
 }

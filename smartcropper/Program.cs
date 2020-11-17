@@ -95,7 +95,15 @@ namespace smartcropper
                 BoostArea[] boostAreas = Array.Empty<BoostArea>();
                 if (!this.NoDetectFace)
                 {
-                    boostAreas = facedetector.FindBoostAreas(imageFile.FullName).ToArray();
+                    try
+                    {
+                        boostAreas = facedetector.FindBoostAreas(imageFile.FullName).ToArray();
+
+                    }
+                    catch
+                    {
+                        // let it be, ignore faces if error detecting
+                    }
                 }
                 watch.Stop();
 
@@ -104,14 +112,14 @@ namespace smartcropper
                 // crop and save
                 var crop = new ImageCropAndSave(Ratio, maxWidth: this.MaxWidth, debug: false);
                 string destFile = DestFile(imageFile);
-                crop.CropAndSave(imageFile.FullName, destFile, boostAreas);
+                crop.CropAndSave(imageFile, destFile, boostAreas);
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex);
                 if (!SkipFailed)
                 {
-                    Copy(imageFile);
+                    Copy(imageFile);  // copy it to dest whenever errors
                 }
             }
         }
